@@ -24,7 +24,7 @@ You have two options:
 
 a) Pull the code and compile it yourself.
 
-b) Download the pre-compiled tools from the folder "obj"
+b) Download the pre-compiled tools from the folder "tools"
 
 How do I use the tools?
 
