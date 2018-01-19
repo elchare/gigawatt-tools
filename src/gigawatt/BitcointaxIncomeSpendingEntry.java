@@ -134,7 +134,7 @@ public class BitcointaxIncomeSpendingEntry {
 		for (int i = 0; i <= maxIdx; i++) {
 			switch (i) {
 			case BitcointaxIncomeSpendingHeader.dateIdx:
-				sb.append(date);
+				sb.append(formatter.format(date));
 				break;
 			case BitcointaxIncomeSpendingHeader.actionIdx:
 				sb.append(action);

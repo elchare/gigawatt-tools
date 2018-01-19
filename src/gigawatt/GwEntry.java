@@ -103,6 +103,34 @@ enum GwTranCurrency {
 					+ " to Cointracking currency");
 		}
 	}
+	
+	/**
+	 * Returns an equivalent BtisTranSymbol object
+	 * 
+	 * @return Equivalent BtisTranSymbol object
+	 * @throws Exception
+	 */
+	public BtisTranSymbol toBtTranCurrency() throws Exception {
+		switch (currency) {
+		case "btc":
+			return BtisTranSymbol.btsBitcoin;
+		case "bch":
+			return BtisTranSymbol.btsBitcoinCash;
+		case "ltc":
+			return BtisTranSymbol.btsLitecoin;
+		case "eth":
+			return BtisTranSymbol.btsEthereum;
+		case "dash":
+			return BtisTranSymbol.btsDash;
+		case "zec":
+			return BtisTranSymbol.btsZCash;
+		default:
+			System.err.println("Cannot convert " + currency 
+					+ " to Cointracking currency");
+			throw new Exception("Cannot convert " + currency 
+					+ " to Cointracking currency");
+		}
+	}
 }
 
 /**
@@ -299,6 +327,59 @@ public class GwEntry {
 		}
 		
 		entry.setDate(createdAt);
+		
+		return entry;
+	}
+	
+	/**
+	 * Gets the transaction type.
+	 * @return
+	 */
+	public GwTranType getType() {
+		return type;
+	}
+	
+	/**
+	 * Uses the fields from the GwEntry to create a BitcointaxIncomeSpendingEntry
+	 * object.
+	 * 
+	 * @return BitcointaxIncomeSpendingEntry object with equivalent fields to
+	 * those of the current object.
+	 * @throws Exception
+	 */
+	BitcointaxIncomeSpendingEntry toBitcointaxIncomeSpendingEntry() throws Exception {
+		if (status != GwTranStatus.gwtDone) return null;
+		
+		BitcointaxIncomeSpendingEntry entry = 
+				new BitcointaxIncomeSpendingEntry();
+		
+		switch (type) {
+		case gwtHosting:
+			entry.setAction(BtisTranAction.btaSpend);
+			entry.setVolume(negStringToPos(amount));
+			break;
+		case gwtReward:
+			entry.setAction(BtisTranAction.btaMining);
+			entry.setVolume(amount);
+			break;
+		case gwtWithdrawal:
+			throw new Exception("Withdrawal is not an Income/Spending "
+					+ "transaction");
+		case gwtWttRent:
+			entry.setAction(BtisTranAction.btaMining);
+			entry.setVolume(amount);
+			break;
+		default:
+			System.err.println("Unsupported GW Tran Type for conversion: " 
+					+ type);
+			throw new Exception("Unsupported GW Tran Type for conversion: " 
+					+ type);
+		}
+		
+		entry.setSource("Gigawatt");
+		entry.setSymbol(currency.toBtTranCurrency());
+		entry.setDate(createdAt);
+		entry.setMemo(type.toString());
 		
 		return entry;
 	}

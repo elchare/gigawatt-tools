@@ -9,17 +9,17 @@ package gigawatt;
  */
 public class BitcointaxIncomeSpendingHeader {
 	private static final String dateTxt = "Date";
-	static final int dateIdx = 1;
+	static final int dateIdx = 0;
 	private static final String actionTxt = "Action";
-	static final int actionIdx = 2;
+	static final int actionIdx = 1;
 	private static final String memoTxt = "Memo";
-	static final int memoIdx = 3;
+	static final int memoIdx = 2;
 	private static final String sourceTxt = "Source";
-	static final int sourceIdx = 4;
+	static final int sourceIdx = 3;
 	private static final String symbolTxt = "Symbol";
-	static final int symbolIdx = 5;
+	static final int symbolIdx = 4;
 	private static final String volumeTxt = "Volume";
-	static final int volumeIdx = 6;
+	static final int volumeIdx = 5;
 	
 	/**
 	 * Gets the maximum index of CSV fields
