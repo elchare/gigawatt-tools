@@ -28,7 +28,11 @@ b) Download the pre-compiled tools from the folder "tools"
 
 How do I use the tools?
 
-For all the details, please see the documentation that I added to the code. For a summary, you can use any of the following syntaxes:
+For all the details, please see the documentation that I added to the code. 
+
+For a graphical user interface, double click on the file tool-gui.jar
+
+For a command line intercae, you can use any of the following syntaxes:
 
 $ java -jar <tool_name> inputFile.csv ouputFile.csv
 
@@ -36,7 +40,7 @@ $ java -jar <tool_name> inputFile.csv > outputFile.csv
 
 $ java -jar <tool_name> < inputFile.csv > outputFile.csv
 
-Just replace <tool_name> with the jar file of the tool that you want to use.
+Just replace <tool_name> with the jar file of the tool that you want to use (tool1.jar or tool2.jar).
 
 How are the timezones handled?
 
