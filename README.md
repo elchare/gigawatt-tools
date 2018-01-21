@@ -30,7 +30,7 @@ b) Download the pre-compiled tools from the folder [tools](https://github.com/el
 
 For all the details, please see the documentation that I added to the code. 
 
-For a graphical user interface, double click on the file tool-gui.jar
+For a graphical user interface, double click on the file [tool-gui.jar](https://github.com/elchare/gigawatt-tools/raw/master/tools/tool-gui.jar)
 
 For a command line intercae, you can use any of the following syntaxes:
 
