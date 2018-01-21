@@ -50,3 +50,9 @@ the local timezone of your system. If you want a different timezone, feel free t
 ## I found a bug, can you fix it?
 
 Yes, I can (just not immediately, but as soon as I can). Just send me a message. I do not work for Gigawatt.
+
+## I found the tools to be useful. I would like to donate.
+Thank you. Feel free to use any of these addresses:
+- BTC: 1NFzbkEhA94xL1ATrGyhvB4HE2uRA2gCCV
+- LTC: LUevGYR5gfqGWXgg4KxF87wkdnZnZiAkDf
+- ETH: 0xB000C7406D75797E194878d531a043006E8d5691
