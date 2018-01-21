@@ -24,7 +24,7 @@ You have two options:
 
 a) Pull the code and compile it yourself.
 
-b) Download the pre-compiled tools from the folder "tools"
+b) Download the pre-compiled tools from the folder [tools](https://github.com/elchare/gigawatt-tools/tree/master/tools)
 
 ## How do I use the tools?
 
@@ -40,7 +40,7 @@ $ java -jar <tool_name> inputFile.csv > outputFile.csv
 
 $ java -jar <tool_name> < inputFile.csv > outputFile.csv
 
-Just replace <tool_name> with the jar file of the tool that you want to use (tool1.jar or tool2.jar).
+Just replace <tool_name> with the jar file of the tool that you want to use ([tool1.jar](https://github.com/elchare/gigawatt-tools/raw/master/tools/tool1.jar) or [tool2.jar](https://github.com/elchare/gigawatt-tools/raw/master/tools/tool2.jar)).
 
 ## How are the timezones handled?
 
