@@ -20,7 +20,7 @@ import java.io.OutputStreamWriter;
  */
 public class CsvConverter {
 
-	private static void 
+	static void 
 	convertSemicolonToComma(BufferedReader in, BufferedWriter out) {
 		String line;
 		int count = 0;
