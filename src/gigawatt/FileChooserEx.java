@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class FileChooserEx {
 	enum OutFormat {
@@ -54,6 +55,10 @@ public class FileChooserEx {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 JFileChooser openFile = new JFileChooser();
+                
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                        "CSV file (*.csv)", "csv");
+                openFile.setFileFilter(filter);
                 int result = openFile.showOpenDialog(null);
                 
                 switch (result) {
@@ -201,7 +206,7 @@ public class FileChooserEx {
         JLabel step3 = new JLabel("Step 3");
         step3.setFont(new Font(step3.getName(),Font.BOLD,18));
         
-        // Creat the donation panel
+        // Create the donation panel
         JPanel donationPanel = createDonationPanel();
 
         Container pane = frame.getContentPane();
