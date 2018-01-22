@@ -34,6 +34,7 @@ public class FileChooserEx {
 	private File selectedInFile = null;
 	private File selectedOutFile = null;
 	private OutFormat selectedFormat = OutFormat.regularCsv;
+	private File inParentFile = null;
 	
     public static void main(String[] args) {
         Runnable r = new Runnable() {
@@ -59,11 +60,14 @@ public class FileChooserEx {
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "CSV file (*.csv)", "csv");
                 openFile.setFileFilter(filter);
+                openFile.setCurrentDirectory(inParentFile);
+                
                 int result = openFile.showOpenDialog(null);
                 
                 switch (result) {
                 case JFileChooser.APPROVE_OPTION:
                 	selectedInFile = openFile.getSelectedFile();
+                	inParentFile = selectedInFile.getAbsoluteFile().getParentFile();
                 	break;
                 }
             }
@@ -82,11 +86,24 @@ public class FileChooserEx {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 JFileChooser saveFile = new JFileChooser();
+                saveFile.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                saveFile.setCurrentDirectory(inParentFile);
+                saveFile.setSelectedFile(new File("newfile.csv"));
+                saveFile.setFileFilter(new FileNameExtensionFilter(
+                		"CSV file (*.csv)", "csv"));
+                
                 int result = saveFile.showSaveDialog(null);
                 
                 switch (result) {
                 case JFileChooser.APPROVE_OPTION:
                 	selectedOutFile = saveFile.getSelectedFile();
+                	
+                	// Automatically fix the extension
+                	String filename = selectedOutFile.toString();
+                	if (!filename.endsWith(".csv")) {
+                		selectedOutFile = new File(filename + ".csv");
+                	}
+                	
                 	try {
 						performConversion();
 					} catch (Exception e) {
