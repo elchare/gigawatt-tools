@@ -97,11 +97,27 @@ public class CointrackingEntry {
 	}
 	
 	/**
+	 * Get Buy Amount
+	 * @return
+	 */
+	String getBuyAmnt() {
+		return buyAmnt;
+	}
+	
+	/**
 	 * Sets the value of the transaction buy currency.
 	 * @param cur
 	 */
 	void setBuyCur(CtTranCurrency cur) {
 		buyCur = cur;
+	}
+	
+	/**
+	 * Get the value of the transaction buy currency.
+	 * @return
+	 */
+	CtTranCurrency getBuyCur() {
+		return buyCur;
 	}
 	
 	/**

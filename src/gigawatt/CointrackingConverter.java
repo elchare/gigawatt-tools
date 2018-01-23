@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 
 /**
  * CointrackingConverter allows converting the CSV file exported from the 
@@ -19,11 +20,23 @@ import java.io.OutputStreamWriter;
  *
  */
 public class CointrackingConverter {
+	private static boolean aggHostingFee = false;
+	private static BigDecimal totalHostingFee;
+	private static GwEntry lastHostingEntry;
+	
+	static void
+	setHostFeeAggrMode(boolean mode) {
+		aggHostingFee = mode;
+	}
 	
 	static void
 	convertToCointrackingFormat(BufferedReader in, BufferedWriter out) throws Exception {
 		String line = null;
 		GwEntry entry;
+		
+		if (aggHostingFee) {
+			totalHostingFee = new BigDecimal(0);
+		}
 		
 		// Parse the header
 		try {
@@ -51,12 +64,58 @@ public class CointrackingConverter {
 			while ((line = in.readLine()) != null) {
 				entry = new GwEntry();
 				entry.parseEntry(line);
-				out.write(entry.toCointrackingEntry().toString());
+				
+				if (aggHostingFee && entry.getType() == GwTranType.gwtHosting) {
+					totalHostingFee = totalHostingFee.add(new BigDecimal(entry.getAmount()));
+					lastHostingEntry = entry;
+					continue;
+				}
+				
+				CointrackingEntry ctEntry = entry.toCointrackingEntry();
+				
+				// Experimental: Adjust the mining amount to account for mining
+				// fees
+				if (aggHostingFee && entry.getType() == GwTranType.gwtReward ) {
+					BigDecimal buyAmnt = new BigDecimal(ctEntry.getBuyAmnt());
+					
+					if (buyAmnt.compareTo(totalHostingFee.abs()) > 0) {
+						// The mined amount can offset the hosting fees
+
+						// Set the fees
+						ctEntry.setFeeAmnt(totalHostingFee.abs().toString());
+						ctEntry.setFeeCur(ctEntry.getBuyCur());
+					
+						// Adjust the buy amount
+						buyAmnt = buyAmnt.add(totalHostingFee);
+						ctEntry.setBuyAmnt(buyAmnt.toString());
+						
+						// Reset the hosting fees
+						totalHostingFee = new BigDecimal(0);
+					} else {
+						// The mined amount cannot fully offset the hosting costs
+						totalHostingFee = totalHostingFee.add(buyAmnt);
+						// Do not write any entry
+						continue;
+					}
+				}
+				
+				out.write(ctEntry.toString());
 				out.newLine();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		// If we are aggregating the hosting fees, and there are hosting fees  
+		// that have not been matched to a mining reward, add them as a
+		// spending entry
+		if (aggHostingFee && totalHostingFee.compareTo(new BigDecimal(0)) < 0) {
+			CointrackingEntry ctEntry = lastHostingEntry.toCointrackingEntry();
+			ctEntry.setSellAmnt(totalHostingFee.abs().toString());
+			
+			out.write(ctEntry.toString());
+			out.newLine();
 		}
 	}
 	

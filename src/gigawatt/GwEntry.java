@@ -226,6 +226,14 @@ public class GwEntry {
 		}
 	}
 	
+	/**
+	 * Returns the transaction currency
+	 * @return
+	 */
+	GwTranCurrency getCurrency() {
+		return currency;
+	}
+	
 	private void setCreatedAt(String createdAt) {
 		LocalDateTime ldt = LocalDateTime.parse(createdAt,formatter);
 		this.createdAt = ldt.atZone(ZoneId.of("UTC"));
@@ -382,5 +390,9 @@ public class GwEntry {
 		entry.setMemo(type.toString());
 		
 		return entry;
+	}
+	
+	String getAmount() {
+		return amount;
 	}
 }

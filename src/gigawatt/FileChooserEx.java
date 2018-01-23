@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +18,7 @@ import java.io.FileWriter;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,6 +38,7 @@ public class FileChooserEx {
 	private File selectedOutFile = null;
 	private OutFormat selectedFormat = OutFormat.regularCsv;
 	private File inParentFile = null;
+	private boolean aggrMode = false;
 	
     public static void main(String[] args) {
         Runnable r = new Runnable() {
@@ -192,6 +196,37 @@ public class FileChooserEx {
     	
     	return panel;
     }
+    
+    private JCheckBox createAggrModeCb() {
+    	JCheckBox cb = new JCheckBox("Aggregate Hosting Fees with Mining Rewards ");
+    	cb.setToolTipText("<html>"
+    			+ "Substracts the mining fees from the mining rewards. <br>"
+    			+ "Thus, you will see no spending entry in the export, <br>"
+    			+ "but you will see the Fee entry filled. For          <br>"
+    			+ "completeness, if there are hosting entries at the   <br>"
+    			+ "end of the file, they will be aggregated and        <br>"
+    			+ "presented as a single spending entry (you can       <br>"
+    			+ "remove this entry manually from the file, if        <br>"
+    			+ "needed)."
+    			+ "</html>");
+    	
+    	cb.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					aggrMode = true;
+				}
+				
+				if (e.getStateChange() == ItemEvent.DESELECTED) {
+					aggrMode = false;
+				}
+			}
+    		
+    	});
+    	return cb;
+    }
 
     private void createUI() {
         JFrame frame = new JFrame();
@@ -204,16 +239,25 @@ public class FileChooserEx {
         regCsvBtn.setSelected(true);
         JRadioButton ctCsvBtn = createCointrackingCsvBtn();
         
+        JCheckBox aggrModeCb = createAggrModeCb();
+        aggrModeCb.setSelected(false);
+        
         // Group the radio buttons
         ButtonGroup group = new ButtonGroup();
         group.add(regCsvBtn);
         group.add(ctCsvBtn);
         
         //Put the radio buttons in a column in a panel.
-        JPanel radioPanel = new JPanel(new GridLayout(0, 1));
-        radioPanel.add(new JLabel("Select new format: "));
-        radioPanel.add(regCsvBtn);
-        radioPanel.add(ctCsvBtn);
+        JPanel radioPanel1 = new JPanel(new GridLayout(0, 1));
+        radioPanel1.add(new JLabel("Select new format: "));
+        radioPanel1.add(regCsvBtn);
+        radioPanel1.add(ctCsvBtn);
+        
+        // Put the aggregation mode in a panel
+        JPanel aggrModePanel = new JPanel(new GridLayout(0, 1));
+        aggrModePanel.add(new JLabel("Select if you want to aggregate mining costs and rewards "
+        		+ "(applies only to Coinbase.info exports): "));
+        aggrModePanel.add(aggrModeCb);
         
         // Create the "steps" labels
         JLabel step1 = new JLabel("Step 1");
@@ -222,6 +266,8 @@ public class FileChooserEx {
         step2.setFont(new Font(step2.getName(),Font.BOLD,18));
         JLabel step3 = new JLabel("Step 3");
         step3.setFont(new Font(step3.getName(),Font.BOLD,18));
+        JLabel step4 = new JLabel("Step 4");
+        step4.setFont(new Font(step4.getName(),Font.BOLD,18));
         
         // Create the donation panel
         JPanel donationPanel = createDonationPanel();
@@ -231,8 +277,10 @@ public class FileChooserEx {
         pane.add(step1);
         pane.add(openBtn);
         pane.add(step2);
-        pane.add(radioPanel);
+        pane.add(radioPanel1);
         pane.add(step3);
+        pane.add(aggrModePanel);
+        pane.add(step4);
         pane.add(saveBtn);
         pane.add(donationPanel);
         pane.add(createMoreInfoPanel());
@@ -261,6 +309,9 @@ public class FileChooserEx {
     		CsvConverter.convertSemicolonToComma(in, out);
     		break;
     	case cointrackingCsv:
+    		if (aggrMode) {
+    			CointrackingConverter.setHostFeeAggrMode(true);
+    		}
     		CointrackingConverter.convertToCointrackingFormat(in, out);
     		break;
     	}
