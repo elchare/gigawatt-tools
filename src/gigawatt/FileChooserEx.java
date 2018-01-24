@@ -89,6 +89,12 @@ public class FileChooserEx {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
+            	if (selectedInFile == null) {
+            		JOptionPane.showMessageDialog(null,"Error: No input file selected. "
+            				+ "Please perform step 1.");
+            		return;
+            	}
+            	
                 JFileChooser saveFile = new JFileChooser();
                 saveFile.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 saveFile.setCurrentDirectory(inParentFile);
@@ -96,26 +102,37 @@ public class FileChooserEx {
                 saveFile.setFileFilter(new FileNameExtensionFilter(
                 		"CSV file (*.csv)", "csv"));
                 
-                int result = saveFile.showSaveDialog(null);
-                
-                switch (result) {
-                case JFileChooser.APPROVE_OPTION:
-                	selectedOutFile = saveFile.getSelectedFile();
-                	
-                	// Automatically fix the extension
-                	String filename = selectedOutFile.toString();
-                	if (!filename.endsWith(".csv")) {
-                		selectedOutFile = new File(filename + ".csv");
-                	}
-                	
-                	try {
-						performConversion();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-                	JOptionPane.showMessageDialog(null, "Conversion completed.");
-                	break;
+                while (true) {
+	                int result = saveFile.showSaveDialog(null);
+	                
+	                switch (result) {
+	                case JFileChooser.APPROVE_OPTION:
+	                	selectedOutFile = saveFile.getSelectedFile();
+	                	
+	                	// Automatically fix the extension
+	                	String filename = selectedOutFile.toString();
+	                	if (!filename.endsWith(".csv")) {
+	                		selectedOutFile = new File(filename + ".csv");
+	                	}
+	                	
+	                	if (selectedOutFile.getAbsolutePath().equals(selectedInFile.getAbsolutePath())) {
+	                		JOptionPane.showMessageDialog(null, "Error: Output file is same as input file. "
+	                				+ "Select a different output file name." );
+	                		break;
+	                	}
+	                	
+	                	try {
+							performConversion();
+							JOptionPane.showMessageDialog(null, "Conversion completed.");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}
+	                	return;
+	                default:
+	                	return;
+	                }
                 }
             }
         });
