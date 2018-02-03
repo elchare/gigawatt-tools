@@ -307,25 +307,27 @@ public class GwEntry {
 			entry.setType(CtTranType.cttSpend);
 			entry.setSellAmnt(amount.abs());
 			entry.setSellCur(currency.toCtTranCurrency());
-			entry.setComment(GwTranType.gwtHosting.toString());
+			entry.setGroup(GwTranType.gwtHosting.toString());
 			break;
 		case gwtReward:
 			entry.setType(CtTranType.cttMining);
 			entry.setBuyAmnt(amount);
 			entry.setBuyCur(currency.toCtTranCurrency());
-			entry.setComment(GwTranType.gwtReward.toString());
+			entry.setGroup(GwTranType.gwtReward.toString());
 			break;
 		case gwtWithdrawal:
 			entry.setType(CtTranType.cttWithdrawal);
-			entry.setSellAmnt(amount.abs());
+			entry.setSellAmnt(amount.abs().add(fee.abs()));
 			entry.setSellCur(currency.toCtTranCurrency());
-			entry.setComment(GwTranType.gwtWithdrawal.toString());
+			entry.setFeeAmnt(fee.abs());
+			entry.setFeeCur(currency.toCtTranCurrency());
+			entry.setGroup(GwTranType.gwtWithdrawal.toString());
 			break;
 		case gwtWttRent:
 			entry.setType(CtTranType.cttMining);
 			entry.setBuyAmnt(amount);
 			entry.setBuyCur(currency.toCtTranCurrency());
-			entry.setComment(GwTranType.gwtWttRent.toString());
+			entry.setGroup(GwTranType.gwtWttRent.toString());
 			break;
 		default:
 			System.err.println("Unsupported GW Tran Type for conversion: " 
