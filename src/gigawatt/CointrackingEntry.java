@@ -1,5 +1,6 @@
 package gigawatt;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,11 +64,11 @@ enum CtTranCurrency {
  */
 public class CointrackingEntry {
 	private CtTranType 		type;
-	private String     		buyAmnt = "";
+	private BigDecimal   	buyAmnt = null;
 	private CtTranCurrency  buyCur = CtTranCurrency.cttNone;
-	private String     		sellAmnt = "";
+	private BigDecimal   	sellAmnt = null;
 	private CtTranCurrency  sellCur = CtTranCurrency.cttNone;
-	private String     		feeAmnt = "";
+	private BigDecimal     	feeAmnt = null;
 	private CtTranCurrency  feeCur = CtTranCurrency.cttNone;;
 	private String     		exchange = "";
 	private String     		group = "";
@@ -92,7 +93,7 @@ public class CointrackingEntry {
 	 * Sets the value of the transaction buy amount.
 	 * @param amnt
 	 */
-	void setBuyAmnt(String amnt) {
+	void setBuyAmnt(BigDecimal amnt) {
 		buyAmnt = amnt;
 	}
 	
@@ -100,7 +101,7 @@ public class CointrackingEntry {
 	 * Get Buy Amount
 	 * @return
 	 */
-	String getBuyAmnt() {
+	BigDecimal getBuyAmnt() {
 		return buyAmnt;
 	}
 	
@@ -124,7 +125,7 @@ public class CointrackingEntry {
 	 * Sets the value of the transaction sell amount.
 	 * @param amnt
 	 */
-	void setSellAmnt(String amnt) {
+	void setSellAmnt(BigDecimal amnt) {
 		sellAmnt = amnt;
 	}
 	
@@ -140,7 +141,7 @@ public class CointrackingEntry {
 	 * Sets the value of the transaction fee amount.
 	 * @param amnt
 	 */
-	void setFeeAmnt(String amnt) {
+	void setFeeAmnt(BigDecimal amnt) {
 		feeAmnt = amnt;
 	}
 	
@@ -211,19 +212,28 @@ public class CointrackingEntry {
 				sb.append(type);
 				break;
 			case CointrackingHeader.buyAmntIdx:
-				sb.append(buyAmnt);
+				if (buyAmnt != null 
+					&& buyAmnt.compareTo(new BigDecimal(0)) != 0) {
+					sb.append(buyAmnt);
+				}
 				break;
 			case CointrackingHeader.buyCurIdx:
 				sb.append(buyCur);
 				break;
 			case CointrackingHeader.sellAmntIdx:
-				sb.append(sellAmnt);
+				if (sellAmnt != null
+				    && sellAmnt.compareTo(new BigDecimal(0)) != 0) {
+					sb.append(sellAmnt);
+				}
 				break;
 			case CointrackingHeader.sellCurIdx:
 				sb.append(sellCur);
 				break;
 			case CointrackingHeader.feeAmntIdx:
-				sb.append(feeAmnt);
+				if (feeAmnt != null
+				    && feeAmnt.compareTo(new BigDecimal(0)) != 0) { 
+					sb.append(feeAmnt);
+				}
 				break;
 			case CointrackingHeader.feeCurIdx:
 				sb.append(feeCur);

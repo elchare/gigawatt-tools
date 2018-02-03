@@ -66,7 +66,7 @@ public class CointrackingConverter {
 				entry.parseEntry(line);
 				
 				if (aggHostingFee && entry.getType() == GwTranType.gwtHosting) {
-					totalHostingFee = totalHostingFee.add(new BigDecimal(entry.getAmount()));
+					totalHostingFee = totalHostingFee.add(entry.getAmount());
 					lastHostingEntry = entry;
 					continue;
 				}
@@ -76,18 +76,18 @@ public class CointrackingConverter {
 				// Experimental: Adjust the mining amount to account for mining
 				// fees
 				if (aggHostingFee && entry.getType() == GwTranType.gwtReward ) {
-					BigDecimal buyAmnt = new BigDecimal(ctEntry.getBuyAmnt());
+					BigDecimal buyAmnt = ctEntry.getBuyAmnt();
 					
 					if (buyAmnt.compareTo(totalHostingFee.abs()) > 0) {
 						// The mined amount can offset the hosting fees
 
 						// Set the fees
-						ctEntry.setFeeAmnt(totalHostingFee.abs().toString());
+						ctEntry.setFeeAmnt(totalHostingFee.abs());
 						ctEntry.setFeeCur(ctEntry.getBuyCur());
 					
 						// Adjust the buy amount
 						buyAmnt = buyAmnt.add(totalHostingFee);
-						ctEntry.setBuyAmnt(buyAmnt.toString());
+						ctEntry.setBuyAmnt(buyAmnt);
 						
 						// Reset the hosting fees
 						totalHostingFee = new BigDecimal(0);
@@ -112,7 +112,7 @@ public class CointrackingConverter {
 		// spending entry
 		if (aggHostingFee && totalHostingFee.compareTo(new BigDecimal(0)) < 0) {
 			CointrackingEntry ctEntry = lastHostingEntry.toCointrackingEntry();
-			ctEntry.setSellAmnt(totalHostingFee.abs().toString());
+			ctEntry.setSellAmnt(totalHostingFee.abs());
 			
 			out.write(ctEntry.toString());
 			out.newLine();

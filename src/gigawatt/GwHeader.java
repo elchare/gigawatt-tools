@@ -26,6 +26,8 @@ public class GwHeader {
 	private static int createdAtIdx;
 	private static final String updatedAtTxt = "Updated At";
 	private static int updatedAtIdx;
+	private static final String feeTxt = "Fee";
+	private static int feeIdx;
 	private static int maxIdx;
 	
 	/**
@@ -68,6 +70,9 @@ public class GwHeader {
 				break;
 			case updatedAtTxt:
 				updatedAtIdx = i;
+				break;
+			case feeTxt:
+				feeIdx = i;
 				break;
 			default:
 				System.err.println("Invalid header entry for GW Header.");
@@ -147,6 +152,8 @@ public class GwHeader {
 	 * 
 	 */
 	static int getUpdatedAtIdx() { return updatedAtIdx; }
+	
+	static int getFeeIdx() { return feeIdx; }
 	
 	/**
 	 * Gets the maximum index of CSV fields

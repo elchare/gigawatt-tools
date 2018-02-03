@@ -1,5 +1,6 @@
 package gigawatt;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -61,7 +62,7 @@ public class BitcointaxIncomeSpendingEntry {
 	private String         memo;
 	private String         source;
 	private BtisTranSymbol symbol;
-	private String         volume;
+	private BigDecimal     volume;
 	
 	private static DateTimeFormatter formatter;
 	
@@ -119,7 +120,7 @@ public class BitcointaxIncomeSpendingEntry {
 	 * 
 	 * @param volume
 	 */
-	void setVolume(String volume) {
+	void setVolume(BigDecimal volume) {
 		this.volume = volume;
 	}
 	

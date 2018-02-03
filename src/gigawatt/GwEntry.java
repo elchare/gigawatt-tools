@@ -1,5 +1,6 @@
 package gigawatt;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -145,11 +146,12 @@ public class GwEntry {
 	private String email;
 	private GwTranStatus status;
 	private GwTranType type;
-	private String amount;
+	private BigDecimal amount;
 	private Boolean auto;
 	private GwTranCurrency currency;
 	private ZonedDateTime createdAt;
 	private ZonedDateTime updatedAt;
+	private BigDecimal fee;
 	
 	private static DateTimeFormatter formatter;
 	
@@ -202,7 +204,7 @@ public class GwEntry {
 	}
 	
 	private void setAmount(String amount) {
-		this.amount = amount;
+		this.amount = new BigDecimal(amount);
 	}
 	
 	private void setAuto(String auto) {
@@ -244,6 +246,10 @@ public class GwEntry {
 		this.updatedAt = ldt.atZone(ZoneId.of("UTC"));
 	}
 	
+	private void setFee(String fee) {
+		this.fee = new BigDecimal(fee);
+	}
+	
 	/**
 	 * Parses a single non-header line from the CSV file
 	 * 
@@ -272,6 +278,8 @@ public class GwEntry {
 				setCreatedAt(parts[i]);
 			} else if (i == GwHeader.getUpdatedAtIdx()) {
 				setUpdatedAt(parts[i]);
+			} else if (i == GwHeader.getFeeIdx()) {
+				setFee(parts[i]);
 			} else {
 				System.err.println("Invalid number of parts in GwEntry: "
 						+ parts.length);
@@ -279,14 +287,6 @@ public class GwEntry {
 						+ parts.length);
 			}
 		}
-	}
-	
-	private String negStringToPos(String val) throws Exception {
-		if (val.charAt(0) != '-') {
-			throw new Exception("Value is already positive.");
-		}
-		
-		return val.substring(1);
 	}
 	
 	/**
@@ -305,7 +305,7 @@ public class GwEntry {
 		switch (type) {
 		case gwtHosting:
 			entry.setType(CtTranType.cttSpend);
-			entry.setSellAmnt(negStringToPos(amount));
+			entry.setSellAmnt(amount.abs());
 			entry.setSellCur(currency.toCtTranCurrency());
 			entry.setComment(GwTranType.gwtHosting.toString());
 			break;
@@ -317,7 +317,7 @@ public class GwEntry {
 			break;
 		case gwtWithdrawal:
 			entry.setType(CtTranType.cttWithdrawal);
-			entry.setSellAmnt(negStringToPos(amount));
+			entry.setSellAmnt(amount.abs());
 			entry.setSellCur(currency.toCtTranCurrency());
 			entry.setComment(GwTranType.gwtWithdrawal.toString());
 			break;
@@ -364,7 +364,7 @@ public class GwEntry {
 		switch (type) {
 		case gwtHosting:
 			entry.setAction(BtisTranAction.btaSpend);
-			entry.setVolume(negStringToPos(amount));
+			entry.setVolume(amount.abs());
 			break;
 		case gwtReward:
 			entry.setAction(BtisTranAction.btaMining);
@@ -392,7 +392,7 @@ public class GwEntry {
 		return entry;
 	}
 	
-	String getAmount() {
+	BigDecimal getAmount() {
 		return amount;
 	}
 }
