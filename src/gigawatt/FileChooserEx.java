@@ -2,6 +2,7 @@ package gigawatt;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -19,6 +20,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,12 +28,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class FileChooserEx {
 	enum OutFormat {
 		regularCsv,
-		cointrackingCsv;
+		cointrackingCsv,
+		bitcointaxCsv;
 	}
 	
 	private File selectedInFile = null;
@@ -172,6 +177,21 @@ public class FileChooserEx {
     	return button;
     }
     
+    private JRadioButton createBitcointaxCsvBtn() {
+    	JRadioButton button = new JRadioButton("Bitcoin.tax CSV");
+    	
+    	button.addActionListener(new ActionListener() {
+    		@Override
+    		public void actionPerformed (ActionEvent arg0) {
+    			selectedFormat = OutFormat.bitcointaxCsv;
+    		}
+    	});
+    	
+    	button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+    	
+    	return button;
+    }
+    
     private JPanel createDonationPanel() {
         // Put the donation info in a column in a panel.
     	JPanel panel = new JPanel(new GridLayout(7, 1));
@@ -203,13 +223,29 @@ public class FileChooserEx {
     
     private JPanel createMoreInfoPanel() {
     	JPanel panel = new JPanel();
-    	JLabel label = new JLabel("For more information and "
-    			+ "latest version check:");
-    	JTextField txtField = 
-    			new JTextField("https://github.com/elchare/gigawatt-tools");
-    	txtField.setEditable(false);
-    	panel.add(label);
-    	panel.add(txtField);
+    	JEditorPane jep = new JEditorPane();
+    	jep.setContentType("text/html");//set content as html
+    	jep.setEditable(false);//so its not editable
+    	jep.setOpaque(false);//so we dont see whit background
+    	jep.setText("For more information and latest version, check the Github "
+    			+ "<a href='https://github.com/elchare/gigawatt-tools'>repository</a>.");
+    	
+    	jep.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent hle) {
+                if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+                    System.out.println(hle.getURL());
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.browse(hle.getURL().toURI());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+    	
+    	panel.add(jep);
     	
     	return panel;
     }
@@ -255,6 +291,7 @@ public class FileChooserEx {
         JRadioButton regCsvBtn = createRegularCsvBtn();
         regCsvBtn.setSelected(true);
         JRadioButton ctCsvBtn = createCointrackingCsvBtn();
+        JRadioButton btCsvBtn = createBitcointaxCsvBtn();
         
         JCheckBox aggrModeCb = createAggrModeCb();
         aggrModeCb.setSelected(false);
@@ -263,17 +300,20 @@ public class FileChooserEx {
         ButtonGroup group = new ButtonGroup();
         group.add(regCsvBtn);
         group.add(ctCsvBtn);
+        group.add(btCsvBtn);
+        
         
         //Put the radio buttons in a column in a panel.
         JPanel radioPanel1 = new JPanel(new GridLayout(0, 1));
         radioPanel1.add(new JLabel("Select new format: "));
         radioPanel1.add(regCsvBtn);
         radioPanel1.add(ctCsvBtn);
+        radioPanel1.add(btCsvBtn);
         
         // Put the aggregation mode in a panel
         JPanel aggrModePanel = new JPanel(new GridLayout(0, 1));
         aggrModePanel.add(new JLabel("Select if you want to aggregate mining costs and rewards "
-        		+ "(applies only to Coinbase.info exports): "));
+        		+ "(applies to Coinbase.info and Bitcoin.tax exports): "));
         aggrModePanel.add(aggrModeCb);
         
         // Create the "steps" labels
@@ -319,21 +359,44 @@ public class FileChooserEx {
     	
     	FileReader inFileReader = new FileReader(selectedInFile);
     	BufferedReader in = new BufferedReader(inFileReader);
-    	BufferedWriter out = new BufferedWriter(new FileWriter(selectedOutFile));
+    	BufferedWriter out1 = null;
+    	BufferedWriter out2 = null;
     	
     	switch (selectedFormat) {
     	case regularCsv:
-    		CsvConverter.convertSemicolonToComma(in, out);
+    		out1 = new BufferedWriter(new FileWriter(selectedOutFile));
+    		CsvConverter.convertSemicolonToComma(in, out1);
     		break;
     	case cointrackingCsv:
+    		out1 = new BufferedWriter(new FileWriter(selectedOutFile));
     		if (aggrMode) {
     			CointrackingConverter.setHostFeeAggrMode(true);
     		}
-    		CointrackingConverter.convertToCointrackingFormat(in, out);
+    		CointrackingConverter.convertToCointrackingFormat(in, out1);
+    		break;
+    	case bitcointaxCsv:
+    		String baseAbsPath = selectedOutFile.getAbsolutePath();
+    		String base = baseAbsPath.substring(0, baseAbsPath.length()-4);
+    		String out1Name = base + "-Income.csv"; 
+    		String out2Name = base + "-Spending.csv";
+    		File out1File = new File(out1Name);
+    		File out2File = new File(out2Name);
+    		
+    		out1 = new BufferedWriter(new FileWriter(out1File));
+    		out2 = new BufferedWriter(new FileWriter(out2File));
+    		
+    		if (aggrMode) {
+    			BitcointaxConverter.setHostFeeAggrMode(true);
+    		}
+    		
+    		BitcointaxConverter.convertToBitcointaxIncomeFormat(in, out1, out2);
     		break;
     	}
     	
     	in.close();
-    	out.close();
+    	out1.close();
+    	if (out2 != null) {
+    		out2.close();
+    	}
     }
 }
