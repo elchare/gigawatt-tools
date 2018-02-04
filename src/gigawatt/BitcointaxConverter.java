@@ -20,7 +20,7 @@ public class BitcointaxConverter {
 
 	static void
 	convertToBitcointaxIncomeFormat(BufferedReader in, BufferedWriter outIncome,
-			BufferedWriter outSpending, BufferedWriter outTrading) 
+			BufferedWriter outSpending) 
 			throws Exception {
 		String line = null;
 		GwEntry entry;
@@ -52,25 +52,30 @@ public class BitcointaxConverter {
 		// FIXME: Spending
 		
 		// Parse the entries
+		BitcointaxIncomeSpendingEntry entry2;
 		try {
 			while ((line = in.readLine()) != null) {
 				entry = new GwEntry();
 				entry.parseEntry(line);
+				entry2 = entry.toBitcointaxIncomeSpendingEntry();
 				
 				switch (entry.getType()) {
 				case gwtHosting:
-					outSpending.write(entry.toBitcointaxIncomeSpendingEntry().toString());
+					outSpending.write(entry2.toString());
 					outSpending.newLine();
 					break;
 				case gwtReward:
-					outIncome.write(entry.toBitcointaxIncomeSpendingEntry().toString());
+					outIncome.write(entry2.toString());
 					outIncome.newLine();
 					break;
 				case gwtWithdrawal:
-					// FIXME: Pending
+					outSpending.write(entry2.toString());
+					outSpending.newLine();
+					outSpending.write(entry2.toTransferFeeString());
+					outSpending.newLine();
 					break;
 				case gwtWttRent:
-					outIncome.write(entry.toBitcointaxIncomeSpendingEntry().toString());
+					outIncome.write(entry2.toString());
 					outIncome.newLine();
 					break;
 				}
@@ -100,17 +105,14 @@ public class BitcointaxConverter {
 		BufferedReader in = null;
 		BufferedWriter outIncome = null;
 		BufferedWriter outSpending = null;
-		BufferedWriter outTrading = null;
 		String outIncomeName;
 		String outSpendingName;
-		String outTradingName;
 		
 		switch (args.length) {
-		case 4:
+		case 3:
 			inputName       = args[0];
 			outIncomeName   = args[1];
 			outSpendingName = args[2];
-			outTradingName  = args[3];
 			
 			inFile = new File(inputName);
 			try {
@@ -124,7 +126,6 @@ public class BitcointaxConverter {
 			try {
 				outIncome   = new BufferedWriter(new FileWriter(outIncomeName));
 				outSpending = new BufferedWriter(new FileWriter(outSpendingName));
-				outTrading  = new BufferedWriter(new FileWriter(outTradingName));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -135,7 +136,7 @@ public class BitcointaxConverter {
 		}
 		
 		try {
-			convertToBitcointaxIncomeFormat(in, outIncome, outSpending, outTrading);
+			convertToBitcointaxIncomeFormat(in, outIncome, outSpending);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -146,7 +147,6 @@ public class BitcointaxConverter {
 			in.close();
 			outIncome.close();
 			outSpending.close();
-			outTrading.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

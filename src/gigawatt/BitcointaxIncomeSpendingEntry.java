@@ -15,7 +15,8 @@ enum BtisTranAction {
 	btaGift("GIFT"),
 	btaMining("MINING"),
 	btaSpend("SPEND"),
-	btaDonation("DONATION");
+	btaDonation("DONATION"),
+	btaTransfer("TRANSFER");
 	
 	private final String type;
 	
@@ -63,6 +64,8 @@ public class BitcointaxIncomeSpendingEntry {
 	private String         source;
 	private BtisTranSymbol symbol;
 	private BigDecimal     volume;
+	private BigDecimal     fee;
+	private BtisTranSymbol feeCurrency;
 	
 	private static DateTimeFormatter formatter;
 	
@@ -125,6 +128,24 @@ public class BitcointaxIncomeSpendingEntry {
 	}
 	
 	/**
+	 * Sets the value of the transaction fee
+	 * 
+	 * @param fee
+	 */
+	void setFee(BigDecimal fee) {
+		this.fee = fee;
+	}
+	
+	/**
+	 * Sets the value of the currency for the transaction fee
+	 * 
+	 * @param feeCurrency
+	 */
+	void setFeeCurrency(BtisTranSymbol feeCurrency) {
+		this.feeCurrency = feeCurrency;
+	}
+	
+	/**
 	 * Converts the object to a String
 	 */
 	public String toString() {
@@ -151,6 +172,46 @@ public class BitcointaxIncomeSpendingEntry {
 				break;
 			case BitcointaxIncomeSpendingHeader.volumeIdx:
 				sb.append(volume);
+				break;
+			}
+			
+			if (i < maxIdx) {
+				sb.append(',');
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	public String toTransferFeeString() throws Exception {
+		StringBuilder sb = new StringBuilder();
+		
+		if (action != BtisTranAction.btaTransfer) {
+			throw new Exception("Tried to assign fee to " + action
+					+ "transaction.");
+		}
+		
+		int maxIdx = BitcointaxIncomeSpendingHeader.getMaxIdx();
+		
+		for (int i = 0; i <= maxIdx; i++) {
+			switch (i) {
+			case BitcointaxIncomeSpendingHeader.dateIdx:
+				sb.append(formatter.format(date));
+				break;
+			case BitcointaxIncomeSpendingHeader.actionIdx:
+				sb.append(BtisTranAction.btaSpend);
+				break;
+			case BitcointaxIncomeSpendingHeader.memoIdx:
+				sb.append(memo + " - transfer fee");
+				break;
+			case BitcointaxIncomeSpendingHeader.sourceIdx:
+				sb.append(source);
+				break;
+			case BitcointaxIncomeSpendingHeader.symbolIdx:
+				sb.append(feeCurrency);
+				break;
+			case BitcointaxIncomeSpendingHeader.volumeIdx:
+				sb.append(fee);
 				break;
 			}
 			

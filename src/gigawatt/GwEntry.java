@@ -374,8 +374,11 @@ public class GwEntry {
 			entry.setVolume(amount);
 			break;
 		case gwtWithdrawal:
-			throw new Exception("Withdrawal is not an Income/Spending "
-					+ "transaction");
+			entry.setAction(BtisTranAction.btaTransfer);
+			entry.setVolume(amount.abs());
+			entry.setFee(fee.abs());
+			entry.setFeeCurrency(currency.toBtTranCurrency());
+			break;
 		case gwtWttRent:
 			entry.setAction(BtisTranAction.btaMining);
 			entry.setVolume(amount);
@@ -394,6 +397,7 @@ public class GwEntry {
 		
 		return entry;
 	}
+	
 	
 	BigDecimal getAmount() {
 		return amount;
