@@ -226,9 +226,46 @@ public class FileChooserEx {
     	JEditorPane jep = new JEditorPane();
     	jep.setContentType("text/html");//set content as html
     	jep.setEditable(false);//so its not editable
-    	jep.setOpaque(false);//so we dont see whit background
+    	jep.setOpaque(false);//so we dont see white background
     	jep.setText("For more information and latest version, check the Github "
     			+ "<a href='https://github.com/elchare/gigawatt-tools'>repository</a>.");
+    	
+    	jep.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent hle) {
+                if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+                    System.out.println(hle.getURL());
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.browse(hle.getURL().toURI());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+    	
+    	panel.add(jep);
+    	
+    	return panel;
+    }
+    
+    private JPanel createInfoPanel() {
+    	JPanel panel = new JPanel();
+    	JEditorPane jep = new JEditorPane();
+    	jep.setContentType("text/html");//set content as html
+    	jep.setEditable(false);//so its not editable
+    	jep.setOpaque(false);//so we dont see white background
+    	
+    	jep.setText("<html>"
+    			+ "Allows converting the CSV file exported from Gigawatt's dashboard <br>"
+    			+ "to multiple CSV file formats. The formats currently supported are <br>"
+    			+ "regular CSV, "
+    			+ "<a href='https://cointracking.info?ref=E928100'>cointracking.info</a>,"
+    			+ " and "
+    			+ "<a href='https://bitcoin.tax/r/eXXFzSWn'>bitcoin.tax</a>."
+    			+ "</html>");
+    	jep.setFont(new Font(jep.getName(),Font.PLAIN,18));
     	
     	jep.addHyperlinkListener(new HyperlinkListener() {
             @Override
@@ -316,6 +353,10 @@ public class FileChooserEx {
         		+ "(applies to Coinbase.info and Bitcoin.tax exports): "));
         aggrModePanel.add(aggrModeCb);
         
+        // Create the description
+        JLabel information = new JLabel("Info");
+        information.setFont(new Font(information.getName(),Font.BOLD,18));
+        
         // Create the "steps" labels
         JLabel step1 = new JLabel("Step 1");
         step1.setFont(new Font(step1.getName(),Font.BOLD,18));
@@ -328,9 +369,14 @@ public class FileChooserEx {
         
         // Create the donation panel
         JPanel donationPanel = createDonationPanel();
+        
+        // Create the info panel
+        JPanel infoPanel = createInfoPanel();
 
         Container pane = frame.getContentPane();
         pane.setLayout(new BoxLayout(pane,BoxLayout.Y_AXIS));
+        pane.add(information);
+        pane.add(infoPanel);
         pane.add(step1);
         pane.add(openBtn);
         pane.add(step2);
