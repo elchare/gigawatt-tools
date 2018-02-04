@@ -16,7 +16,11 @@ easily used and imported to other tools. For example, Microsoft Excel and Cointr
 Tool 1: Transforms the Gigawatt CSV file into a regular CSV (see the file CSVConverter.java). The output can be opened in Microsoft Excel.
 
 Tool 2: Transforms the Gigawatt CSV file into a CSV file that can be imported to Cointracking.info (see the file CointrackingConverter.java). 
-I would appreciate if you use my referral link to sign up for cointracking https://cointracking.info?ref=E928100 
+I would appreciate if you use my referral link to sign up for [cointracking](https://cointracking.info?ref=E928100)
+
+Tool 3: Transforms the Gigawatt CSV file into two CSV files (one for Income, one for Spending) that can be imported
+to Bitcoin.tax (see the file  BitcointaxConverter.java).
+I would appreciate if you use my referall link to sign up for [bitcoin.tax](https://bitcoin.tax/r/eXXFzSWn) 
 
 ## How do I get access to the tools?
 
@@ -32,7 +36,7 @@ For all the details, please see the documentation that I added to the code.
 
 For a graphical user interface, double click on the file [tool-gui.jar](https://github.com/elchare/gigawatt-tools/raw/master/tools/tool-gui.jar)
 
-For a command line intercae, you can use any of the following syntaxes:
+For a command line interface, you can use any of the following syntaxes:
 
 $ java -jar <tool_name> inputFile.csv ouputFile.csv
 
