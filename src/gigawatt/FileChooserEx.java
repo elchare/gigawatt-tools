@@ -412,6 +412,12 @@ public class FileChooserEx {
     	case regularCsv:
     		out1 = new BufferedWriter(new FileWriter(selectedOutFile));
     		CsvConverter.convertSemicolonToComma(in, out1);
+    		JOptionPane.showMessageDialog(null, 
+    				"<html>"
+    				+ "New files created:<br>"
+    				+ selectedOutFile
+    				+ "</html>"
+    				);
     		break;
     	case cointrackingCsv:
     		out1 = new BufferedWriter(new FileWriter(selectedOutFile));
@@ -419,6 +425,12 @@ public class FileChooserEx {
     			CointrackingConverter.setHostFeeAggrMode(true);
     		}
     		CointrackingConverter.convertToCointrackingFormat(in, out1);
+    		JOptionPane.showMessageDialog(null, 
+    				"<html>"
+    				+ "New files created:<br>"
+    				+ selectedOutFile
+    				+ "</html>"
+    				);
     		break;
     	case bitcointaxCsv:
     		String baseAbsPath = selectedOutFile.getAbsolutePath();
@@ -436,6 +448,13 @@ public class FileChooserEx {
     		}
     		
     		BitcointaxConverter.convertToBitcointaxIncomeFormat(in, out1, out2);
+    		JOptionPane.showMessageDialog(null, 
+    				"<html>"
+    				+ "New files created:<br>"
+    				+ out1Name +"<br>"
+    				+ out2Name +"<br>"
+    				+ "</html>"
+    				);
     		break;
     	}
     	
