@@ -146,6 +146,19 @@ public class BitcointaxIncomeSpendingEntry {
 	}
 	
 	/**
+	 * Get Volume amount
+	 * 
+	 * @return
+	 */
+	BigDecimal getVolume() {
+		return volume;
+	}
+	
+	BtisTranSymbol getSymbol() {
+		return symbol;
+	}
+	
+	/**
 	 * Converts the object to a String
 	 */
 	public String toString() {
