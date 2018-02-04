@@ -82,8 +82,10 @@ public class CointrackingConverter {
 						// The mined amount can offset the hosting fees
 
 						// Set the fees
-						ctEntry.setFeeAmnt(totalHostingFee.abs());
-						ctEntry.setFeeCur(ctEntry.getBuyCur());
+						if (totalHostingFee.compareTo(new BigDecimal(0)) != 0) {
+							ctEntry.setFeeAmnt(totalHostingFee.abs());
+							ctEntry.setFeeCur(ctEntry.getBuyCur());
+						}
 					
 						// Adjust the buy amount
 						buyAmnt = buyAmnt.add(totalHostingFee);

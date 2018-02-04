@@ -337,6 +337,7 @@ public class GwEntry {
 		}
 		
 		entry.setDate(createdAt);
+		entry.setComment(id);
 		
 		return entry;
 	}
