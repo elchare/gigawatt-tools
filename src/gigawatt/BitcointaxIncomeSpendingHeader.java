@@ -12,14 +12,14 @@ public class BitcointaxIncomeSpendingHeader {
 	static final int dateIdx = 0;
 	private static final String actionTxt = "Action";
 	static final int actionIdx = 1;
-	private static final String memoTxt = "Memo";
-	static final int memoIdx = 2;
 	private static final String sourceTxt = "Source";
-	static final int sourceIdx = 3;
+	static final int sourceIdx = 2;
 	private static final String symbolTxt = "Symbol";
-	static final int symbolIdx = 4;
+	static final int symbolIdx = 3;
 	private static final String volumeTxt = "Volume";
-	static final int volumeIdx = 5;
+	static final int volumeIdx = 4;
+	private static final String memoTxt = "Memo";
+	static final int memoIdx = 5;
 	
 	/**
 	 * Gets the maximum index of CSV fields
